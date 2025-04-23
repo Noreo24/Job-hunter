@@ -4,15 +4,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.service.UserService;
+import vn.noreo.jobhunter.service.error.IdInvalidExeption;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -24,31 +27,37 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
-    public User createNewUser(@RequestBody User newUser) {
+    @PostMapping("/users")
+    public ResponseEntity<User> createNewUser(@RequestBody User newUser) {
         User user = this.userService.handleCreateUser(newUser);
-        return user;
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @DeleteMapping("/user/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
         this.userService.handleDeleteUser(id);
-        return "Deleted user with id: " + id;
+        return ResponseEntity.noContent().build();
+        // return ResponseEntity.status(HttpStatus.OK).body("Deleted user with id: " +
+        // id);
+        // return ResponseEntity.ok("Deleted user with id: " + id);
     }
 
-    @GetMapping("/user/{id}")
-    public User fetchUserById(@PathVariable("id") long id) {
-        return this.userService.handleFetchUserById(id);
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> fetchUserById(@PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleFetchUserById(id));
+        // return ResponseEntity.ok(this.userService.handleFetchUserById(id));
     }
 
-    @GetMapping("/user")
-    public List<User> fetchAllUser() {
-        return this.userService.handleFetchAllUser();
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> fetchAllUser() {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleFetchAllUser());
+        // return ResponseEntity.ok(this.userService.handleFetchAllUser());
     }
 
-    @PutMapping("/user")
-    public User updateUser(@RequestBody User updatedUser) {
+    @PutMapping("/users")
+    public ResponseEntity<User> updateUser(@RequestBody User updatedUser) {
         User user = this.userService.handleUpdateUser(updatedUser);
-        return user;
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+        // return ResponseEntity.ok(user);
     }
 }
