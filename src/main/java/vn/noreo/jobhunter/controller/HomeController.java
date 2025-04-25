@@ -6,9 +6,8 @@ import vn.noreo.jobhunter.service.error.IdInvalidExeption;
 public class HomeController {
     @GetMapping("/")
     public String homepage() throws IdInvalidExeption {
-        if (true) {
+        {
             throw new IdInvalidExeption("Id is invalid");
         }
-        return "Home";
     }
 }

@@ -32,6 +32,10 @@ public class UserService {
         return this.userRepository.findById(id).orElse(null);
     }
 
+    public User handleFetchUserByUsername(String username) {
+        return this.userRepository.findByEmail(username);
+    }
+
     public List<User> handleFetchAllUser() {
         return this.userRepository.findAll();
     }
