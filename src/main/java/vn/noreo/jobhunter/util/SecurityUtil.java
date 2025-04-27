@@ -3,9 +3,6 @@ package vn.noreo.jobhunter.util;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -14,8 +11,6 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-
-import com.nimbusds.jose.util.Base64;
 
 @Service
 public class SecurityUtil {
@@ -33,11 +28,6 @@ public class SecurityUtil {
 
     @Value("${jwt.token-validity-in-seconds}")
     private long jwtExpirationTime;
-
-    private SecretKey getSecretKey() {
-        byte[] jwtKeyBytes = Base64.from(jwtKey).decode();
-        return new SecretKeySpec(jwtKeyBytes, 0, jwtKeyBytes.length, JWT_ALGORITHM.getName());
-    }
 
     public String createToken(Authentication authentication) {
         Instant now = Instant.now();
