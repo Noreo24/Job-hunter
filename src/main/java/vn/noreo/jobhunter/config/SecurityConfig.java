@@ -29,7 +29,7 @@ import vn.noreo.jobhunter.util.SecurityUtil;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     @Value("${jwt.KEY.base64-secret}")
     private String jwtKey;
@@ -44,6 +44,7 @@ public class SecurityConfiguration {
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         http
                 .csrf(c -> c.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login").permitAll()
                         .anyRequest().authenticated())
