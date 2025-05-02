@@ -2,6 +2,8 @@ package vn.noreo.jobhunter.domain;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.noreo.jobhunter.util.SecurityUtil;
 
 @Entity
 @Table(name = "companies")
@@ -33,6 +36,8 @@ public class Company {
 
     private String logo;
 
+    // Format ngay thang nam truoc khi tra ve client
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
 
     private Instant updatedAt;
@@ -45,9 +50,9 @@ public class Company {
     // Viet Listener - @PrePersist return void & co tham so dau vao la entity
     @PrePersist
     public void handleBeforeCreate() {
-        this.createdBy = "Created by current user";
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
         this.createdAt = Instant.now();
-        // this.updatedAt = Instant.now();
-
     }
 }
