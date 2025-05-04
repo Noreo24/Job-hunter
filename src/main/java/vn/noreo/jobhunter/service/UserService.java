@@ -36,7 +36,7 @@ public class UserService {
         return this.userRepository.findByEmail(username);
     }
 
-    public List<User> handleFetchAllUser() {
+    public List<User> handleFetchAllUsers() {
         return this.userRepository.findAll();
     }
 
