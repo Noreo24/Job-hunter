@@ -2,10 +2,14 @@ package vn.noreo.jobhunter.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import vn.noreo.jobhunter.domain.User;
+import vn.noreo.jobhunter.domain.dto.Meta;
+import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.noreo.jobhunter.repository.UserRepository;
 
 @Service
@@ -36,8 +40,19 @@ public class UserService {
         return this.userRepository.findByEmail(username);
     }
 
-    public List<User> handleFetchAllUsers() {
-        return this.userRepository.findAll();
+    public ResultPaginationDTO handleFetchAllUsers(Pageable pageable) {
+        Page<User> userPage = this.userRepository.findAll(pageable);
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setCurrentPage(userPage.getNumber());
+        meta.setPageSize(userPage.getSize());
+        meta.setTotalPages(userPage.getTotalPages());
+        meta.setTotalItems(userPage.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setDataResult(userPage.getContent());
+        return resultPaginationDTO;
     }
 
     public User handleUpdateUser(User updatedUser) {
