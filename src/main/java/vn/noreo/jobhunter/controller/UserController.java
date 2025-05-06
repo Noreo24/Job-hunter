@@ -6,7 +6,6 @@ import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.noreo.jobhunter.service.UserService;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;

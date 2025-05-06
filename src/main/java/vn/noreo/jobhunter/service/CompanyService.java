@@ -1,11 +1,14 @@
 package vn.noreo.jobhunter.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import vn.noreo.jobhunter.domain.Company;
+import vn.noreo.jobhunter.domain.dto.Meta;
+import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.noreo.jobhunter.repository.CompanyRepository;
 
 @Service
@@ -21,8 +24,20 @@ public class CompanyService {
         return this.companyRepository.save(newCompany);
     }
 
-    public List<Company> handleFetchAllCompanies() {
-        return this.companyRepository.findAll();
+    public ResultPaginationDTO handleFetchAllCompanies(Pageable pageable) {
+        Page<Company> companyPage = this.companyRepository.findAll(pageable);
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setCurrentPage(companyPage.getNumber() + 1);
+        meta.setPageSize(companyPage.getSize());
+        meta.setTotalPages(companyPage.getTotalPages());
+        meta.setTotalItems(companyPage.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setDataResult(companyPage.getContent());
+
+        return resultPaginationDTO;
     }
 
     public Company handleFetchCompanyById(long id) {
