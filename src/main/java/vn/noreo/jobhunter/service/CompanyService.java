@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.noreo.jobhunter.domain.Company;
@@ -24,8 +25,8 @@ public class CompanyService {
         return this.companyRepository.save(newCompany);
     }
 
-    public ResultPaginationDTO handleFetchAllCompanies(Pageable pageable) {
-        Page<Company> companyPage = this.companyRepository.findAll(pageable);
+    public ResultPaginationDTO handleFetchAllCompanies(Specification<Company> specification, Pageable pageable) {
+        Page<Company> companyPage = this.companyRepository.findAll(specification, pageable);
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         Meta meta = new Meta();
 
