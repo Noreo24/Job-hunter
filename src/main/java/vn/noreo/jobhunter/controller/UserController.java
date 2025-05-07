@@ -2,6 +2,8 @@ package vn.noreo.jobhunter.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.noreo.jobhunter.service.UserService;
@@ -10,6 +12,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,13 +55,10 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<ResultPaginationDTO> fetchAllUser(
-            @RequestParam("current") Optional<String> currentPageOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional) {
-        String currentPage = currentPageOptional.isPresent() ? currentPageOptional.get() : "";
-        String pageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
+            @Filter Specification<User> specification,
+            Pageable pageable) {
 
-        Pageable pageable = PageRequest.of(Integer.parseInt(currentPage) - 1, Integer.parseInt(pageSize));
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleFetchAllUsers(pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleFetchAllUsers(specification, pageable));
         // return ResponseEntity.ok(this.userService.handleFetchAllUser());
     }
 
