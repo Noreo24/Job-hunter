@@ -7,6 +7,7 @@ import com.turkraft.springfilter.boot.Filter;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.noreo.jobhunter.service.UserService;
+import vn.noreo.jobhunter.util.annotation.ApiMessage;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,6 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @ApiMessage("Fetch all users")
     public ResponseEntity<ResultPaginationDTO> fetchAllUser(
             @Filter Specification<User> specification,
             Pageable pageable) {
