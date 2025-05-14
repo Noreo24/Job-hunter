@@ -4,10 +4,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.noreo.jobhunter.domain.dto.ResUpdateUserDTO;
+import vn.noreo.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.noreo.jobhunter.domain.dto.ResFetchUserDTO;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
+import vn.noreo.jobhunter.util.error.IdInvalidException;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,23 +37,39 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createNewUser(@RequestBody User newUser) {
+    @ApiMessage("Create new user")
+    public ResponseEntity<ResCreateUserDTO> createNewUser(@Valid @RequestBody User newUser) throws IdInvalidException {
+
+        boolean isEmailExists = this.userService.checkUserExistsByEmail(newUser.getEmail());
+        if (isEmailExists) {
+            throw new IdInvalidException("Email " + newUser.getEmail() + " already exists");
+        }
         User user = this.userService.handleCreateUser(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(user));
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
+    @ApiMessage("Delete user by id")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
+        User currentUser = this.userService.handleFetchUserById(id);
+        if (currentUser == null) {
+            throw new IdInvalidException("User with id " + id + " not found");
+        }
         this.userService.handleDeleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(null);
         // return ResponseEntity.status(HttpStatus.OK).body("Deleted user with id: " +
         // id);
         // return ResponseEntity.ok("Deleted user with id: " + id);
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> fetchUserById(@PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleFetchUserById(id));
+    @ApiMessage("Fetch user by id")
+    public ResponseEntity<ResFetchUserDTO> fetchUserById(@PathVariable("id") long id) throws IdInvalidException {
+        User currentUser = this.userService.handleFetchUserById(id);
+        if (currentUser == null) {
+            throw new IdInvalidException("User with id " + id + " not found");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResFetchUserDTO(currentUser));
         // return ResponseEntity.ok(this.userService.handleFetchUserById(id));
     }
 
@@ -63,9 +84,14 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User updatedUser) {
-        User user = this.userService.handleUpdateUser(updatedUser);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+    @ApiMessage("Update user")
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User updatedUser) throws IdInvalidException {
+        User currentUser = this.userService.handleUpdateUser(updatedUser);
+        if (currentUser == null) {
+            throw new IdInvalidException("User with id " + updatedUser.getId() + " not found");
+
+        }
+        return ResponseEntity.ok(this.userService.convertToResUpdateUserDTO(currentUser));
         // return ResponseEntity.ok(user);
     }
 }
