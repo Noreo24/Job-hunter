@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.dto.LoginDTO;
 import vn.noreo.jobhunter.domain.dto.ResLoginDTO;
+import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
 
 @RestController
@@ -21,10 +23,15 @@ public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
+    public AuthController(
+            AuthenticationManagerBuilder authenticationManagerBuilder,
+            SecurityUtil securityUtil,
+            UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -44,6 +51,14 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResLoginDTO resLoginDTO = new ResLoginDTO();
+        User currentUser = this.userService.handleFetchUserByUsername(loginRequest.getUsername());
+        if (currentUser != null) {
+            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                    currentUser.getId(),
+                    currentUser.getEmail(),
+                    currentUser.getName());
+            resLoginDTO.setUser(userLogin);
+        }
         resLoginDTO.setAccessToken(accessToken);
 
         return ResponseEntity.ok().body(resLoginDTO);
