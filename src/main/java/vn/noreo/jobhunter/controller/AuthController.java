@@ -19,6 +19,9 @@ import vn.noreo.jobhunter.domain.dto.LoginDTO;
 import vn.noreo.jobhunter.domain.dto.ResLoginDTO;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
+import vn.noreo.jobhunter.util.annotation.ApiMessage;
+
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -40,7 +43,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginDTO loginRequest) {
 
         // Nạp input gồm username/password vào Security
@@ -49,9 +52,6 @@ public class AuthController {
 
         // Xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // Create token JWT
-        String accessToken = this.securityUtil.createAccessToken(authentication);
 
         // Lưu thông tin vào SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -65,6 +65,9 @@ public class AuthController {
                     currentUser.getName());
             resLoginDTO.setUser(userLogin);
         }
+
+        // Create access token
+        String accessToken = this.securityUtil.createAccessToken(authentication, resLoginDTO.getUser());
         resLoginDTO.setAccessToken(accessToken);
 
         // Create refresh token
@@ -82,4 +85,21 @@ public class AuthController {
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(resLoginDTO);
     }
+
+    // Lấy thông tin tài khoản
+    @GetMapping("/auth/account")
+    @ApiMessage("Fetch account information")
+    public ResponseEntity<ResLoginDTO.UserLogin> getAccount() {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+
+        User currentUser = this.userService.handleFetchUserByUsername(email);
+        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
+        if (currentUser != null) {
+            userLogin.setId(currentUser.getId());
+            userLogin.setEmail(currentUser.getEmail());
+            userLogin.setUsername(currentUser.getName());
+        }
+        return ResponseEntity.ok().body(userLogin);
+    }
+
 }
