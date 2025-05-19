@@ -124,4 +124,13 @@ public class UserService {
         }
         return currentUser;
     }
+
+    // Lưu referesh token vào database
+    public void updateUserRefreshToken(String token, String email) {
+        User currentUser = this.handleFetchUserByUsername(email);
+        if (currentUser != null) {
+            currentUser.setRefreshToken(token);
+            this.userRepository.save(currentUser);
+        }
+    }
 }

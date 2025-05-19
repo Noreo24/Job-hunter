@@ -1,5 +1,8 @@
 package vn.noreo.jobhunter.controller;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,6 +28,9 @@ public class AuthController {
     private final SecurityUtil securityUtil;
     private final UserService userService;
 
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
+
     public AuthController(
             AuthenticationManagerBuilder authenticationManagerBuilder,
             SecurityUtil securityUtil,
@@ -45,7 +51,7 @@ public class AuthController {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // Create token JWT
-        String accessToken = this.securityUtil.createToken(authentication);
+        String accessToken = this.securityUtil.createAccessToken(authentication);
 
         // Lưu thông tin vào SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -61,6 +67,19 @@ public class AuthController {
         }
         resLoginDTO.setAccessToken(accessToken);
 
-        return ResponseEntity.ok().body(resLoginDTO);
+        // Create refresh token
+        String refreshToken = this.securityUtil.createRefreshToken(loginRequest.getUsername(), resLoginDTO);
+        // Update refresh token to database
+        this.userService.updateUserRefreshToken(refreshToken, loginRequest.getUsername());
+        // Không lưu access token vào database vì trong db không có access token và ...
+
+        // Set cookie
+        ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true) // Cho phép cookie được truy cập từ http (server), k cho phép truy cập từ js
+                .secure(true) // Chỉ gửi cookie qua https, k gửi qua http
+                .path("/") // Đường dẫn cookie, sử dụng với tất cả các request trong dự án
+                .maxAge(refreshTokenExpiration) // Thời gian sống của cookie, ở đây = thời gian sống của refresh token
+                .build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(resLoginDTO);
     }
 }
