@@ -53,7 +53,7 @@ public class AuthController {
         // Xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        // Lưu thông tin vào SecurityContextHolder
+        // Lưu thông tin vào SecurityContextHolder (Có thể sử dụng sau này)
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResLoginDTO resLoginDTO = new ResLoginDTO();

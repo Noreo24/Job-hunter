@@ -2,6 +2,8 @@ package vn.noreo.jobhunter.util;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -43,12 +45,17 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
+        List<String> listAuthorities = new ArrayList<String>();
+
+        listAuthorities.add("ROLE_USER_CREATE");
+        listAuthorities.add("ROLE_USER_UPDATE");
         // Create JWT claims set (Payload - Data)
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(authentication.getName())
                 .claim("user", resLoginDTO)
+                .claim("permission", listAuthorities)
                 .build();
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,
