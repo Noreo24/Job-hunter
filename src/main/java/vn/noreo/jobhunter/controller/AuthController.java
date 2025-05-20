@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
@@ -102,4 +104,12 @@ public class AuthController {
         return ResponseEntity.ok().body(userLogin);
     }
 
+    @GetMapping("/auth/refresh")
+    @ApiMessage("Refresh access token")
+    public ResponseEntity<String> getRefreshToken(@CookieValue(name = "refreshToken") String refreshToken) {
+        // Check refresh token
+        Jwt decodedToken = this.securityUtil.checkValidRefreshToken(refreshToken);
+        String email = decodedToken.getSubject();
+        return ResponseEntity.ok().body(email);
+    }
 }
