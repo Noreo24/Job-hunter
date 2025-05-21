@@ -21,6 +21,7 @@ import vn.noreo.jobhunter.domain.dto.ResLoginDTO;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
+import vn.noreo.jobhunter.util.error.IdInvalidException;
 
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +70,7 @@ public class AuthController {
         }
 
         // Create access token
-        String accessToken = this.securityUtil.createAccessToken(authentication, resLoginDTO.getUser());
+        String accessToken = this.securityUtil.createAccessToken(authentication.getName(), resLoginDTO.getUser());
         resLoginDTO.setAccessToken(accessToken);
 
         // Create refresh token
@@ -106,10 +107,50 @@ public class AuthController {
 
     @GetMapping("/auth/refresh")
     @ApiMessage("Refresh access token")
-    public ResponseEntity<String> getRefreshToken(@CookieValue(name = "refreshToken") String refreshToken) {
+    public ResponseEntity<ResLoginDTO> getRefreshToken(
+            @CookieValue(name = "refreshToken", defaultValue = "noCookies") String refreshToken)
+            throws IdInvalidException {
+
+        // Check cookies exist
+        if (refreshToken.equals("noCookies")) {
+            throw new IdInvalidException("You don't have refresh token in cookies!");
+        }
+
         // Check refresh token
         Jwt decodedToken = this.securityUtil.checkValidRefreshToken(refreshToken);
         String email = decodedToken.getSubject();
-        return ResponseEntity.ok().body(email);
+
+        // Check user exist by email & refresh token
+        User currentUser = this.userService.getUserByRefreshTokenAndEmail(refreshToken, email);
+        if (currentUser == null) {
+            throw new IdInvalidException("Refresh token is invalid");
+        }
+
+        // Create new access token/set refresh token cookies
+        ResLoginDTO resLoginDTO = new ResLoginDTO();
+        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                currentUser.getId(),
+                currentUser.getEmail(),
+                currentUser.getName());
+        resLoginDTO.setUser(userLogin);
+
+        // Create access token
+        String accessToken = this.securityUtil.createAccessToken(email, resLoginDTO.getUser());
+        resLoginDTO.setAccessToken(accessToken);
+
+        // Create refresh token
+        String newRefreshToken = this.securityUtil.createRefreshToken(email, resLoginDTO);
+        // Update refresh token to database
+        this.userService.updateUserRefreshToken(newRefreshToken, email);
+        // Không lưu access token vào database vì trong db không có access token và ...
+
+        // Set cookies
+        ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+                .httpOnly(true) // Cho phép cookie được truy cập từ http (server), k cho phép truy cập từ js
+                .secure(true) // Chỉ gửi cookie qua https, k gửi qua http
+                .path("/") // Đường dẫn cookie, sử dụng với tất cả các request trong dự án
+                .maxAge(refreshTokenExpiration) // Thời gian sống của cookie, ở đây = thời gian sống của refresh token
+                .build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(resLoginDTO);
     }
 }

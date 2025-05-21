@@ -8,7 +8,9 @@ import vn.noreo.jobhunter.domain.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    User findByEmail(String email); // Tìm kiếm người dùng theo username
+    User findByEmail(String email);
 
-    boolean existsByEmail(String email); // Kiểm tra người dùng có tồn tại hay không
+    boolean existsByEmail(String email);
+
+    User findByRefreshTokenAndEmail(String refreshToken, String email);
 }
