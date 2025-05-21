@@ -80,7 +80,8 @@ public class AuthController {
         // Không lưu access token vào database vì trong db không có access token và ...
 
         // Set cookie
-        ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
+        ResponseCookie responseCookie = ResponseCookie
+                .from("refreshToken", refreshToken)
                 .httpOnly(true) // Cho phép cookie được truy cập từ http (server), k cho phép truy cập từ js
                 .secure(true) // Chỉ gửi cookie qua https, k gửi qua http
                 .path("/") // Đường dẫn cookie, sử dụng với tất cả các request trong dự án
@@ -145,12 +146,36 @@ public class AuthController {
         // Không lưu access token vào database vì trong db không có access token và ...
 
         // Set cookies
-        ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+        ResponseCookie responseCookie = ResponseCookie
+                .from("refreshToken", newRefreshToken)
                 .httpOnly(true) // Cho phép cookie được truy cập từ http (server), k cho phép truy cập từ js
                 .secure(true) // Chỉ gửi cookie qua https, k gửi qua http
                 .path("/") // Đường dẫn cookie, sử dụng với tất cả các request trong dự án
                 .maxAge(refreshTokenExpiration) // Thời gian sống của cookie, ở đây = thời gian sống của refresh token
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(resLoginDTO);
+    }
+
+    @PostMapping("/auth/logout")
+    @ApiMessage("Logout")
+    public ResponseEntity<Void> logout() throws IdInvalidException {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+
+        if (email.equals("")) {
+            throw new IdInvalidException("Email is null");
+        }
+
+        // Update refresh token to null
+        this.userService.updateUserRefreshToken(null, email);
+
+        // Xóa cookie
+        ResponseCookie deleteCookie = ResponseCookie
+                .from("refreshToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0) // Xóa cookie
+                .build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, deleteCookie.toString()).body(null);
     }
 }
