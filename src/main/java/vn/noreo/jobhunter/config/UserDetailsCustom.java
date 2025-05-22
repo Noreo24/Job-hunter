@@ -1,4 +1,4 @@
-package vn.noreo.jobhunter.service;
+package vn.noreo.jobhunter.config;
 
 import java.util.Collections;
 
@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import vn.noreo.jobhunter.domain.User;
+import vn.noreo.jobhunter.service.UserService;
 
 @Component("userDetailsService")
 public class UserDetailsCustom implements UserDetailsService {
