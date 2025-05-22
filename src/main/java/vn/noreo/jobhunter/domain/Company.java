@@ -1,14 +1,17 @@
 package vn.noreo.jobhunter.domain;
 
 import java.time.Instant;
+import java.util.List;
 
 // import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -34,20 +37,18 @@ public class Company {
     private String description;
 
     private String address;
-
     private String logo;
 
     // On: Format ngày tháng năm trước khi trả về client
     // Off: Để frontend tự format
     // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
-
-    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
-
     private String createdBy;
-
     private String updatedBy;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private List<User> users;
 
     // Callback - @PrePersist return void & khong co tham so dau vao
     // Viet Listener - @PrePersist return void & co tham so dau vao la entity
