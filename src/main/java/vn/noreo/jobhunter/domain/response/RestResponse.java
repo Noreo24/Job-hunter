@@ -1,4 +1,4 @@
-package vn.noreo.jobhunter.domain;
+package vn.noreo.jobhunter.domain.response;
 
 public class RestResponse<T> {
 

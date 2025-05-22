@@ -1,4 +1,4 @@
-package vn.noreo.jobhunter.domain.dto;
+package vn.noreo.jobhunter.domain.request;
 
 import jakarta.validation.constraints.NotBlank;
 

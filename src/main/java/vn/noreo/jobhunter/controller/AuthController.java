@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.User;
-import vn.noreo.jobhunter.domain.dto.ReqLoginDTO;
-import vn.noreo.jobhunter.domain.dto.ResLoginDTO;
+import vn.noreo.jobhunter.domain.request.ReqLoginDTO;
+import vn.noreo.jobhunter.domain.response.ResLoginDTO;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;

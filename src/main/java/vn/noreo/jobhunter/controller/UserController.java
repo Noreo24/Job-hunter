@@ -6,10 +6,10 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.User;
-import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
-import vn.noreo.jobhunter.domain.dto.ResUpdateUserDTO;
-import vn.noreo.jobhunter.domain.dto.ResCreateUserDTO;
-import vn.noreo.jobhunter.domain.dto.ResFetchUserDTO;
+import vn.noreo.jobhunter.domain.response.ResCreateUserDTO;
+import vn.noreo.jobhunter.domain.response.ResFetchUserDTO;
+import vn.noreo.jobhunter.domain.response.ResUpdateUserDTO;
+import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 import vn.noreo.jobhunter.util.error.IdInvalidException;

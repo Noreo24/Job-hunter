@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.noreo.jobhunter.domain.Company;
-import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
 import vn.noreo.jobhunter.repository.CompanyRepository;
 
 @Service

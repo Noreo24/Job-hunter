@@ -17,7 +17,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Company;
-import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
 import vn.noreo.jobhunter.service.CompanyService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 

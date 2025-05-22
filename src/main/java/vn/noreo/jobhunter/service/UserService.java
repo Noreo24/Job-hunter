@@ -10,10 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import vn.noreo.jobhunter.domain.User;
-import vn.noreo.jobhunter.domain.dto.ResultPaginationDTO;
-import vn.noreo.jobhunter.domain.dto.ResUpdateUserDTO;
-import vn.noreo.jobhunter.domain.dto.ResCreateUserDTO;
-import vn.noreo.jobhunter.domain.dto.ResFetchUserDTO;
+import vn.noreo.jobhunter.domain.response.ResCreateUserDTO;
+import vn.noreo.jobhunter.domain.response.ResFetchUserDTO;
+import vn.noreo.jobhunter.domain.response.ResUpdateUserDTO;
+import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
 import vn.noreo.jobhunter.repository.UserRepository;
 
 @Service
