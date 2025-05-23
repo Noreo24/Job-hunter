@@ -22,4 +22,14 @@ public class ResFetchUserDTO {
     private String address;
     private Instant createdAt;
     private Instant updatedAt;
+    private CompanyUser company;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CompanyUser {
+        private long id;
+        private String name;
+    }
 }
