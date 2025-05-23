@@ -42,7 +42,6 @@ public class CompanyController {
     public ResponseEntity<ResultPaginationDTO> fetchAllCompanies(
             @Filter Specification<Company> specification,
             Pageable pageable) {
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.companyService.handleFetchAllCompanies(specification, pageable));
     }

@@ -144,6 +144,7 @@ public class UserService {
                                 item.getCompany() != null ? item.getCompany().getId() : 0,
                                 item.getCompany() != null ? item.getCompany().getName() : null)))
                 .collect(Collectors.toList());
+
         resultPaginationDTO.setDataResult(userDTOs);
         return resultPaginationDTO;
     }
@@ -166,7 +167,7 @@ public class UserService {
         return currentUser;
     }
 
-    // Lưu referesh token vào database
+    // Save refresh token to database
     public void updateUserRefreshToken(String token, String email) {
         User currentUser = this.handleFetchUserByUsername(email);
         if (currentUser != null) {

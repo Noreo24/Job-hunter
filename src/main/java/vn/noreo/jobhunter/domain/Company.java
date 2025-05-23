@@ -3,6 +3,8 @@ package vn.noreo.jobhunter.domain;
 import java.time.Instant;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
@@ -48,6 +50,7 @@ public class Company {
     private String updatedBy;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<User> users;
 
     // Callback - @PrePersist return void & khong co tham so dau vao

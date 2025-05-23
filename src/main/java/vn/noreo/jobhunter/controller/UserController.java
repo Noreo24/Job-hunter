@@ -57,9 +57,6 @@ public class UserController {
         }
         this.userService.handleDeleteUser(id);
         return ResponseEntity.ok(null);
-        // return ResponseEntity.status(HttpStatus.OK).body("Deleted user with id: " +
-        // id);
-        // return ResponseEntity.ok("Deleted user with id: " + id);
     }
 
     @GetMapping("/users/{id}")
@@ -70,7 +67,6 @@ public class UserController {
             throw new IdInvalidException("User with id " + id + " not found");
         }
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResFetchUserDTO(currentUser));
-        // return ResponseEntity.ok(this.userService.handleFetchUserById(id));
     }
 
     @GetMapping("/users")
@@ -78,9 +74,7 @@ public class UserController {
     public ResponseEntity<ResultPaginationDTO> fetchAllUser(
             @Filter Specification<User> specification,
             Pageable pageable) {
-
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleFetchAllUsers(specification, pageable));
-        // return ResponseEntity.ok(this.userService.handleFetchAllUser());
     }
 
     @PutMapping("/users")
@@ -92,6 +86,5 @@ public class UserController {
 
         }
         return ResponseEntity.ok(this.userService.convertToResUpdateUserDTO(currentUser));
-        // return ResponseEntity.ok(user);
     }
 }
