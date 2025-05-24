@@ -83,7 +83,6 @@ public class UserController {
         User currentUser = this.userService.handleUpdateUser(updatedUser);
         if (currentUser == null) {
             throw new IdInvalidException("User with id " + updatedUser.getId() + " not found");
-
         }
         return ResponseEntity.ok(this.userService.convertToResUpdateUserDTO(currentUser));
     }
