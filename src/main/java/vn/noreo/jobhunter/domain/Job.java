@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import vn.noreo.jobhunter.util.SecurityUtil;
@@ -33,7 +34,10 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "Job name is required")
     private String name;
+
+    @NotBlank(message = "Job location is required")
     private String location;
     private double salary;
     private int quantity;
