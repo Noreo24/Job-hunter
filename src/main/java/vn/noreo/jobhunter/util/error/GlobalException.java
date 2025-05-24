@@ -58,4 +58,14 @@ public class GlobalException {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
+
+    // Ném exception cho user khi id không tồn tại
+    @ExceptionHandler(value = { UploadFileException.class })
+    public ResponseEntity<RestResponse<Object>> handleFileUploadExeption(Exception exception) {
+        RestResponse<Object> restResponse = new RestResponse<Object>();
+        restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        restResponse.setError(exception.getMessage());
+        restResponse.setMessage("Exception upload file");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+    }
 }
