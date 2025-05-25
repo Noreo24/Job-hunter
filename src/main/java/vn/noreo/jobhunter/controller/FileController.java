@@ -3,6 +3,8 @@ package vn.noreo.jobhunter.controller;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,16 @@ public class FileController {
         // Validate
         if (file == null || file.isEmpty()) {
             throw new UploadFileException("File is empty, please select a file to upload.");
+        }
+
+        // Check file extension (file type)
+        String fileName = file.getOriginalFilename();
+        List<String> allowedExtensions = Arrays.asList("pdf", "jpg", "jpeg", "png", "doc", "docx");
+        boolean isValidExtension = allowedExtensions.stream().anyMatch(ext -> fileName.toLowerCase().endsWith(ext));
+
+        if (!isValidExtension) {
+            throw new UploadFileException(
+                    "Invalid file type. Allowed types are: " + String.join(", ", allowedExtensions));
         }
 
         // Create the folder (directory) if it does not exist
