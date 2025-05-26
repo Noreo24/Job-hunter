@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import vn.noreo.jobhunter.util.SecurityUtil;
@@ -28,7 +29,10 @@ public class Resume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "Email is required")
     private String email;
+
+    @NotBlank(message = "URL is required")
     private String url;
 
     @Enumerated(EnumType.STRING)
