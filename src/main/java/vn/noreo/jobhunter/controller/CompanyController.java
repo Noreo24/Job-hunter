@@ -20,6 +20,7 @@ import vn.noreo.jobhunter.domain.Company;
 import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
 import vn.noreo.jobhunter.service.CompanyService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
+import vn.noreo.jobhunter.util.error.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,6 +33,7 @@ public class CompanyController {
     }
 
     @PostMapping("/companies")
+    @ApiMessage("Create new company")
     public ResponseEntity<Company> createNewCompany(@Valid @RequestBody Company newCompany) {
         Company company = this.companyService.handleCreateCompany(newCompany);
         return ResponseEntity.ok(company);
@@ -46,13 +48,25 @@ public class CompanyController {
                 .body(this.companyService.handleFetchAllCompanies(specification, pageable));
     }
 
+    @GetMapping("/companies/{id}")
+    @ApiMessage("Fetch company by id")
+    public ResponseEntity<Company> fetchCompanyById(@PathVariable("id") long id) throws IdInvalidException {
+        Company company = this.companyService.handleFetchCompanyById(id);
+        if (company == null) {
+            throw new IdInvalidException("Company with id " + id + " does not exist.");
+        }
+        return ResponseEntity.ok().body(company);
+    }
+
     @PutMapping("/companies")
+    @ApiMessage("Update company")
     public ResponseEntity<Company> updateCompany(@Valid @RequestBody Company updatedCompany) {
         Company company = this.companyService.handleUpdateCompany(updatedCompany);
         return ResponseEntity.ok(company);
     }
 
     @DeleteMapping("/companies/{id}")
+    @ApiMessage("Delete company by id")
     public ResponseEntity<Void> deleteCompany(@PathVariable("id") long id) {
         this.companyService.handleDeleteCompany(id);
         return ResponseEntity.ok(null);
