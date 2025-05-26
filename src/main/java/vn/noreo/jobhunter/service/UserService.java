@@ -123,10 +123,10 @@ public class UserService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
-        meta.setTotalPages(userPage.getTotalPages());
-        meta.setTotalItems(userPage.getTotalElements());
+        meta.setPages(userPage.getTotalPages());
+        meta.setTotal(userPage.getTotalElements());
 
         resultPaginationDTO.setMeta(meta);
 
@@ -145,7 +145,7 @@ public class UserService {
                                 item.getCompany() != null ? item.getCompany().getName() : null)))
                 .collect(Collectors.toList());
 
-        resultPaginationDTO.setDataResult(userDTOs);
+        resultPaginationDTO.setResult(userDTOs);
         return resultPaginationDTO;
     }
 

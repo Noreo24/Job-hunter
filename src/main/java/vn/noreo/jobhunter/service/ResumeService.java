@@ -119,10 +119,10 @@ public class ResumeService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
-        meta.setTotalPages(resumePage.getTotalPages());
-        meta.setTotalItems(resumePage.getTotalElements());
+        meta.setPages(resumePage.getTotalPages());
+        meta.setTotal(resumePage.getTotalElements());
 
         resultPaginationDTO.setMeta(meta);
 
@@ -154,7 +154,7 @@ public class ResumeService {
                 .map(this::convertToResFetchResumeDTO)
                 .collect(Collectors.toList());
 
-        resultPaginationDTO.setDataResult(resumeDTOs);
+        resultPaginationDTO.setResult(resumeDTOs);
         return resultPaginationDTO;
     }
 }

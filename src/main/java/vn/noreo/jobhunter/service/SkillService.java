@@ -47,14 +47,14 @@ public class SkillService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
-        meta.setTotalPages(skillPage.getTotalPages());
-        meta.setTotalItems(skillPage.getTotalElements());
+        meta.setPages(skillPage.getTotalPages());
+        meta.setTotal(skillPage.getTotalElements());
 
         resultPaginationDTO.setMeta(meta);
 
-        resultPaginationDTO.setDataResult(skillPage.getContent());
+        resultPaginationDTO.setResult(skillPage.getContent());
         return resultPaginationDTO;
     }
 

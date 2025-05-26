@@ -149,14 +149,14 @@ public class JobService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
-        meta.setTotalPages(jobPage.getTotalPages());
-        meta.setTotalItems(jobPage.getTotalElements());
+        meta.setPages(jobPage.getTotalPages());
+        meta.setTotal(jobPage.getTotalElements());
 
         resultPaginationDTO.setMeta(meta);
 
-        resultPaginationDTO.setDataResult(jobPage.getContent());
+        resultPaginationDTO.setResult(jobPage.getContent());
         return resultPaginationDTO;
     }
 }

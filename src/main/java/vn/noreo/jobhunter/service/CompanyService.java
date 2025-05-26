@@ -33,13 +33,13 @@ public class CompanyService {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-        meta.setCurrentPage(pageable.getPageNumber() + 1);
+        meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
-        meta.setTotalPages(companyPage.getTotalPages());
-        meta.setTotalItems(companyPage.getTotalElements());
+        meta.setPages(companyPage.getTotalPages());
+        meta.setTotal(companyPage.getTotalElements());
 
         resultPaginationDTO.setMeta(meta);
-        resultPaginationDTO.setDataResult(companyPage.getContent());
+        resultPaginationDTO.setResult(companyPage.getContent());
 
         return resultPaginationDTO;
     }
