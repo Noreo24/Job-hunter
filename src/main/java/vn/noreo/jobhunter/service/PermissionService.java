@@ -28,6 +28,16 @@ public class PermissionService {
                 permission.getModule());
     }
 
+    public boolean isSameName(Permission permission) {
+        Optional<Permission> existingPermission = this.handleFetchPermissionById(permission.getId());
+        if (existingPermission.isPresent()) {
+            if (existingPermission.get().getName().equals(permission.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Permission handleCreatePermission(Permission newPermission) {
         return this.permissionRepository.save(newPermission);
     }

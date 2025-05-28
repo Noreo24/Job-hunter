@@ -2,12 +2,14 @@ package vn.noreo.jobhunter.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.request.ReqLoginDTO;
+import vn.noreo.jobhunter.domain.response.ResCreateUserDTO;
 import vn.noreo.jobhunter.domain.response.ResLoginDTO;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
@@ -33,6 +36,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
@@ -40,10 +44,12 @@ public class AuthController {
     public AuthController(
             AuthenticationManagerBuilder authenticationManagerBuilder,
             SecurityUtil securityUtil,
-            UserService userService) {
+            UserService userService,
+            PasswordEncoder passwordEncoder) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/auth/login")
@@ -184,5 +190,18 @@ public class AuthController {
                 .maxAge(0) // Xóa cookie
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, deleteCookie.toString()).body(null);
+    }
+
+    @GetMapping("/auth/register")
+    @ApiMessage("Register new user")
+    public ResponseEntity<ResCreateUserDTO> register(@Valid @RequestBody User newUser) throws IdInvalidException {
+        boolean isEmailExists = this.userService.checkUserExistsByEmail(newUser.getEmail());
+        if (isEmailExists) {
+            throw new IdInvalidException("Email " + newUser.getEmail() + " already exists");
+        }
+        String hashedPassword = this.passwordEncoder.encode(newUser.getPassword());
+        newUser.setPassword(hashedPassword);
+        User createdUser = this.userService.handleCreateUser(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(createdUser));
     }
 }

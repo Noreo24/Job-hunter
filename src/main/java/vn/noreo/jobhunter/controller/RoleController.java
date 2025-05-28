@@ -53,6 +53,16 @@ public class RoleController {
         return ResponseEntity.ok().body(this.roleService.handleFetchAllRoles(specification, pageable));
     }
 
+    @GetMapping("/roles/{id}")
+    @ApiMessage("Fetch role by id")
+    public ResponseEntity<Role> fetchRoleById(@PathVariable("id") long id) throws IdInvalidException {
+        Optional<Role> currentRoleOpt = this.roleService.handleFetchRoleById(id);
+        if (!currentRoleOpt.isPresent()) {
+            throw new IdInvalidException("Role with id " + id + " not found");
+        }
+        return ResponseEntity.ok(currentRoleOpt.get());
+    }
+
     @DeleteMapping("/roles/{id}")
     @ApiMessage("Delete role by id")
     public ResponseEntity<Void> deleteRoleById(@PathVariable("id") long id) throws IdInvalidException {

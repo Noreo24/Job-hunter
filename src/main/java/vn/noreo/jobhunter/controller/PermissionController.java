@@ -52,7 +52,9 @@ public class PermissionController {
             throws IdInvalidException {
         // Check if the permission already exists
         if (this.permissionService.checkPermissionExists(updatedPermission)) {
-            throw new IdInvalidException("Permission already exists: " + updatedPermission.getName());
+            if (this.permissionService.isSameName(updatedPermission)) {
+                throw new IdInvalidException("Permission already exists: " + updatedPermission.getName());
+            }
         }
         return ResponseEntity.ok(this.permissionService.handleUpdatePermission(updatedPermission));
     }
