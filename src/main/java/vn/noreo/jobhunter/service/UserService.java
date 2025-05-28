@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import vn.noreo.jobhunter.domain.Company;
+import vn.noreo.jobhunter.domain.Role;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.response.ResCreateUserDTO;
 import vn.noreo.jobhunter.domain.response.ResFetchUserDTO;
@@ -24,11 +25,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CompanyService companyService;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CompanyService companyService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CompanyService companyService,
+            RoleService roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     public boolean checkUserExistsByEmail(String email) {
@@ -38,11 +42,18 @@ public class UserService {
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
         ResCreateUserDTO userDTO = new ResCreateUserDTO();
         ResCreateUserDTO.CompanyUser companyUser = new ResCreateUserDTO.CompanyUser();
+        ResCreateUserDTO.RoleUser roleUser = new ResCreateUserDTO.RoleUser();
 
         if (user.getCompany() != null) {
             companyUser.setId(user.getCompany().getId());
             companyUser.setName(user.getCompany().getName());
             userDTO.setCompany(companyUser);
+        }
+
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            userDTO.setRole(roleUser);
         }
 
         userDTO.setId(user.getId());
@@ -58,11 +69,18 @@ public class UserService {
     public ResFetchUserDTO convertToResFetchUserDTO(User user) {
         ResFetchUserDTO userDTO = new ResFetchUserDTO();
         ResFetchUserDTO.CompanyUser companyUser = new ResFetchUserDTO.CompanyUser();
+        ResFetchUserDTO.RoleUser roleUser = new ResFetchUserDTO.RoleUser();
 
         if (user.getCompany() != null) {
             companyUser.setId(user.getCompany().getId());
             companyUser.setName(user.getCompany().getName());
             userDTO.setCompany(companyUser);
+        }
+
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            userDTO.setRole(roleUser);
         }
 
         userDTO.setId(user.getId());
@@ -79,11 +97,18 @@ public class UserService {
     public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
         ResUpdateUserDTO userDTO = new ResUpdateUserDTO();
         ResUpdateUserDTO.CompanyUser companyUser = new ResUpdateUserDTO.CompanyUser();
+        ResUpdateUserDTO.RoleUser roleUser = new ResUpdateUserDTO.RoleUser();
 
         if (user.getCompany() != null) {
             companyUser.setId(user.getCompany().getId());
             companyUser.setName(user.getCompany().getName());
             userDTO.setCompany(companyUser);
+        }
+
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            userDTO.setRole(roleUser);
         }
 
         userDTO.setId(user.getId());
@@ -102,6 +127,12 @@ public class UserService {
         if (newUser.getCompany() != null) {
             Optional<Company> companyOptional = this.companyService.findById(newUser.getCompany().getId());
             newUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+        }
+
+        // Check role exists
+        if (newUser.getRole() != null) {
+            Optional<Role> roleOptional = this.roleService.handleFetchRoleById(newUser.getRole().getId());
+            newUser.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
         }
         return this.userRepository.save(newUser);
     }
@@ -131,20 +162,8 @@ public class UserService {
         resultPaginationDTO.setMeta(meta);
 
         List<ResFetchUserDTO> userDTOs = userPage.getContent().stream()
-                .map(item -> new ResFetchUserDTO(
-                        item.getId(),
-                        item.getName(),
-                        item.getEmail(),
-                        item.getAge(),
-                        item.getGender(),
-                        item.getAddress(),
-                        item.getCreatedAt(),
-                        item.getUpdatedAt(),
-                        new ResFetchUserDTO.CompanyUser(
-                                item.getCompany() != null ? item.getCompany().getId() : 0,
-                                item.getCompany() != null ? item.getCompany().getName() : null)))
+                .map(this::convertToResFetchUserDTO)
                 .collect(Collectors.toList());
-
         resultPaginationDTO.setResult(userDTOs);
         return resultPaginationDTO;
     }
@@ -161,6 +180,12 @@ public class UserService {
             if (updatedUser.getCompany() != null) {
                 Optional<Company> companyOptional = this.companyService.findById(updatedUser.getCompany().getId());
                 currentUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+            }
+
+            // Check role exists
+            if (updatedUser.getRole() != null) {
+                Optional<Role> roleOptional = this.roleService.handleFetchRoleById(updatedUser.getRole().getId());
+                currentUser.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
             }
             currentUser = this.userRepository.save(currentUser);
         }

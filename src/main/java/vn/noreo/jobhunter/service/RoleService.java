@@ -60,13 +60,14 @@ public class RoleService {
             throw new IdInvalidException("Role with id " + updatedRole.getId() + " does not exist");
         }
         Role currentRole = roleOptional.get();
-        currentRole.setName("NONAME");
-        this.roleRepository.save(currentRole);
+        // currentRole.setName("NONAME");
+        // this.roleRepository.save(currentRole);
 
         // Check if the role name already exists
-        if (this.checkRoleExists(updatedRole.getName())) {
-            throw new IdInvalidException("Role with name " + updatedRole.getName() + " already exists");
-        }
+        // if (this.checkRoleExists(updatedRole.getName())) {
+        // throw new IdInvalidException("Role with name " + updatedRole.getName() + "
+        // already exists");
+        // }
 
         // Update fields
         currentRole.setName(updatedRole.getName());

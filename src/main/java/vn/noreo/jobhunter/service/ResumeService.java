@@ -9,6 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.turkraft.springfilter.builder.FilterBuilder;
+import com.turkraft.springfilter.converter.FilterSpecification;
+import com.turkraft.springfilter.converter.FilterSpecificationConverter;
+import com.turkraft.springfilter.parser.FilterParser;
+import com.turkraft.springfilter.parser.node.FilterNode;
+
 import vn.noreo.jobhunter.domain.Job;
 import vn.noreo.jobhunter.domain.Resume;
 import vn.noreo.jobhunter.domain.User;
@@ -19,6 +25,7 @@ import vn.noreo.jobhunter.domain.response.resume.ResUpdateResumeDTO;
 import vn.noreo.jobhunter.repository.JobRepository;
 import vn.noreo.jobhunter.repository.ResumeRepository;
 import vn.noreo.jobhunter.repository.UserRepository;
+import vn.noreo.jobhunter.util.SecurityUtil;
 
 @Service
 public class ResumeService {
@@ -26,6 +33,9 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
+    private FilterParser filterParser;
+    private FilterSpecificationConverter filterSpecificationConverter;
+    FilterBuilder filterBuilder;
 
     public ResumeService(ResumeRepository resumeRepository,
             UserRepository userRepository,
@@ -149,6 +159,34 @@ public class ResumeService {
         // List<ResFetchResumeDTO> resumeDTOs = resumePage.getContent().stream()
         // .map(item -> this.convertToResFetchResumeDTO(item))
         // .collect(Collectors.toList());
+
+        List<ResFetchResumeDTO> resumeDTOs = resumePage.stream()
+                .map(this::convertToResFetchResumeDTO)
+                .collect(Collectors.toList());
+
+        resultPaginationDTO.setResult(resumeDTOs);
+        return resultPaginationDTO;
+    }
+
+    public ResultPaginationDTO handleFetchResumesByUser(Pageable pageable) {
+        // Query builder to fetch resumes by user
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+        FilterNode filterNode = filterParser.parse("email == '" + email + "'");
+        FilterSpecification<Resume> filterSpecification = filterSpecificationConverter.convert(filterNode);
+
+        // Fetch resumes by user
+        Page<Resume> resumePage = this.resumeRepository.findAll(filterSpecification, pageable);
+
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(resumePage.getTotalPages());
+        meta.setTotal(resumePage.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
 
         List<ResFetchResumeDTO> resumeDTOs = resumePage.stream()
                 .map(this::convertToResFetchResumeDTO)
