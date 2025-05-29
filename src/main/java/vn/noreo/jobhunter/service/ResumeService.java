@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.turkraft.springfilter.builder.FilterBuilder;
 import com.turkraft.springfilter.converter.FilterSpecification;
 import com.turkraft.springfilter.converter.FilterSpecificationConverter;
 import com.turkraft.springfilter.parser.FilterParser;
@@ -33,16 +32,18 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
-    private FilterParser filterParser;
-    private FilterSpecificationConverter filterSpecificationConverter;
-    FilterBuilder filterBuilder;
+    private final FilterParser filterParser;
+    private final FilterSpecificationConverter filterSpecificationConverter;
 
     public ResumeService(ResumeRepository resumeRepository,
             UserRepository userRepository,
-            JobRepository jobRepository) {
+            JobRepository jobRepository, FilterParser filterParser,
+            FilterSpecificationConverter filterSpecificationConverter) {
         this.resumeRepository = resumeRepository;
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
+        this.filterParser = filterParser;
+        this.filterSpecificationConverter = filterSpecificationConverter;
     }
 
     public Optional<Resume> handleFetchResumeById(long id) {
@@ -172,7 +173,7 @@ public class ResumeService {
         // Query builder to fetch resumes by user
         String email = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
-        FilterNode filterNode = filterParser.parse("email == '" + email + "'");
+        FilterNode filterNode = filterParser.parse("email='" + email + "'");
         FilterSpecification<Resume> filterSpecification = filterSpecificationConverter.convert(filterNode);
 
         // Fetch resumes by user

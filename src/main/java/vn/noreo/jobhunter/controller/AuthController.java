@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +35,6 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
@@ -44,12 +42,10 @@ public class AuthController {
     public AuthController(
             AuthenticationManagerBuilder authenticationManagerBuilder,
             SecurityUtil securityUtil,
-            UserService userService,
-            PasswordEncoder passwordEncoder) {
+            UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/auth/login")
@@ -192,15 +188,13 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, deleteCookie.toString()).body(null);
     }
 
-    @GetMapping("/auth/register")
+    @PostMapping("/auth/register")
     @ApiMessage("Register new user")
     public ResponseEntity<ResCreateUserDTO> register(@Valid @RequestBody User newUser) throws IdInvalidException {
         boolean isEmailExists = this.userService.checkUserExistsByEmail(newUser.getEmail());
         if (isEmailExists) {
             throw new IdInvalidException("Email " + newUser.getEmail() + " already exists");
         }
-        String hashedPassword = this.passwordEncoder.encode(newUser.getPassword());
-        newUser.setPassword(hashedPassword);
         User createdUser = this.userService.handleCreateUser(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(createdUser));
     }
