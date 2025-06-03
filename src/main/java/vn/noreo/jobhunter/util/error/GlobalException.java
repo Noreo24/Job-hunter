@@ -68,4 +68,14 @@ public class GlobalException {
         restResponse.setMessage("Exception upload file");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
+
+    // Ném exception cho user khi id không tồn tại
+    @ExceptionHandler(value = { PermissionException.class })
+    public ResponseEntity<RestResponse<Object>> handlePermissionExeption(Exception exception) {
+        RestResponse<Object> restResponse = new RestResponse<Object>();
+        restResponse.setStatusCode(HttpStatus.FORBIDDEN.value());
+        restResponse.setError(exception.getMessage());
+        restResponse.setMessage("Forbidden");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(restResponse);
+    }
 }

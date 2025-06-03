@@ -14,7 +14,7 @@ import vn.noreo.jobhunter.domain.Role;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.service.UserService;
 import vn.noreo.jobhunter.util.SecurityUtil;
-import vn.noreo.jobhunter.util.error.IdInvalidException;
+import vn.noreo.jobhunter.util.error.PermissionException;
 
 public class PermissionInterceptor implements HandlerInterceptor {
 
@@ -46,10 +46,10 @@ public class PermissionInterceptor implements HandlerInterceptor {
                             .anyMatch(eachPermission -> eachPermission.getApiPath().equals(path)
                                     && eachPermission.getMethod().equals(httpMethod));
                     if (isAllowed == false) {
-                        throw new IdInvalidException("No permission");
+                        throw new PermissionException("You are not authorized to access this resource");
                     }
                 } else {
-                    throw new IdInvalidException("No role");
+                    throw new PermissionException("Access denied: missing required role");
                 }
             }
         }
