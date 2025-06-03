@@ -17,7 +17,7 @@ public class ResFetchResumeDTO {
     private long id;
     private String email;
     private String url;
-    private ResumeStateEnum state;
+    private ResumeStateEnum status;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;

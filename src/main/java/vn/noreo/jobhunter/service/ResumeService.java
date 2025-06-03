@@ -112,7 +112,7 @@ public class ResumeService {
         resumeDTO.setId(resume.getId());
         resumeDTO.setEmail(resume.getEmail());
         resumeDTO.setUrl(resume.getUrl());
-        resumeDTO.setState(resume.getState());
+        resumeDTO.setStatus(resume.getStatus());
         resumeDTO.setCreatedAt(resume.getCreatedAt());
         resumeDTO.setUpdatedAt(resume.getUpdatedAt());
         resumeDTO.setCreatedBy(resume.getCreatedBy());

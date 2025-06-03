@@ -36,7 +36,7 @@ public class Resume {
     private String url;
 
     @Enumerated(EnumType.STRING)
-    private ResumeStateEnum state;// PENDING-REVIEWING-APPROVED-REJECTED
+    private ResumeStateEnum status;// PENDING-REVIEWING-APPROVED-REJECTED
 
     private Instant createdAt;
     private Instant updatedAt;
