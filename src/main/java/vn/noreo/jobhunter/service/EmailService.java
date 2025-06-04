@@ -1,6 +1,7 @@
 package vn.noreo.jobhunter.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
@@ -13,6 +14,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import vn.noreo.jobhunter.domain.Job;
+import vn.noreo.jobhunter.repository.JobRepository;
 
 @Service
 public class EmailService {
@@ -20,12 +23,14 @@ public class EmailService {
     private final MailSender mailSender;
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine springTemplateEngine;
+    private final JobRepository jobRepository;
 
     public EmailService(MailSender mailSender, JavaMailSender javaMailSender,
-            SpringTemplateEngine springTemplateEngine) {
+            SpringTemplateEngine springTemplateEngine, JobRepository jobRepository) {
         this.mailSender = mailSender;
         this.javaMailSender = javaMailSender;
         this.springTemplateEngine = springTemplateEngine;
+        this.jobRepository = jobRepository;
     }
 
     public void sendEmail() {
@@ -54,6 +59,11 @@ public class EmailService {
 
     public void sendEmailFromTemplateSync(String to, String subject, String templateName) {
         Context context = new Context();
+        List<Job> listJobs = this.jobRepository.findAll();
+        String name = "fsa";
+        context.setVariable("name", name);
+        context.setVariable("listJobs", listJobs);
+
         String content = this.springTemplateEngine.process(templateName, context);
         this.sendEmailSync(to, subject, content, false, true);
     }
