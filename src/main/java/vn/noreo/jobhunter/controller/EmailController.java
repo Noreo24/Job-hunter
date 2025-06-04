@@ -3,9 +3,11 @@ package vn.noreo.jobhunter.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.transaction.Transactional;
 import vn.noreo.jobhunter.service.SubscriberService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
@@ -20,11 +22,9 @@ public class EmailController {
 
     @GetMapping("/email")
     @ApiMessage("Send email")
+    @Scheduled(cron = "*/30 * * * * *") // Auto run this API after 30s
+    @Transactional
     public String sendEmail() {
-        // this.emailService.sendEmail();
-        // this.emailService.sendEmailSync("buianhtuan2003kb@gmail.com", "TEST SEND
-        // EMAIL", "<h1> <b> Hello </b> </h1>",
-        // false, true);
         this.subscriberService.sendSubscribersEmailJobs();
         return "ok";
     }
