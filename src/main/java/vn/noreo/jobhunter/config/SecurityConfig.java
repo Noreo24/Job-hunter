@@ -43,9 +43,10 @@ public class SecurityConfig {
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         String[] whiteList = {
                 "/",
-                "api/v1/auth/login", "api/v1/auth/refresh", "api/v1/auth/register",
-                "storage/**",
-                "api/v1/auth/companies/**", "api/v1/auth/jobs/**" };
+                "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/register",
+                "/storage/**",
+                "/api/v1/email/**"
+        };
         http
                 .csrf(c -> c.disable())
                 .cors(Customizer.withDefaults())
