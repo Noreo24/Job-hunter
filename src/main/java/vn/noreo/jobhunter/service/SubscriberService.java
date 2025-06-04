@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import vn.noreo.jobhunter.domain.Job;
 import vn.noreo.jobhunter.domain.Skill;
 import vn.noreo.jobhunter.domain.Subscriber;
+import vn.noreo.jobhunter.domain.response.email.ResEmailJobDTO;
+import vn.noreo.jobhunter.repository.JobRepository;
 import vn.noreo.jobhunter.repository.SkillRepository;
 import vn.noreo.jobhunter.repository.SubscriberRepository;
 import vn.noreo.jobhunter.util.error.IdInvalidException;
@@ -17,10 +20,18 @@ public class SubscriberService {
 
     private final SubscriberRepository subscriberRepository;
     private final SkillRepository skillRepository;
+    private final JobRepository jobRepository;
+    private final EmailService emailService;
 
-    public SubscriberService(SkillRepository skillRepository, SubscriberRepository subscriberRepository) {
-        this.skillRepository = skillRepository;
+    public SubscriberService(
+            SubscriberRepository subscriberRepository,
+            SkillRepository skillRepository,
+            JobRepository jobRepository,
+            EmailService emailService) {
         this.subscriberRepository = subscriberRepository;
+        this.skillRepository = skillRepository;
+        this.jobRepository = jobRepository;
+        this.emailService = emailService;
     }
 
     public Optional<Subscriber> handleFetchSubscriberById(long id) {
@@ -62,5 +73,40 @@ public class SubscriberService {
             currentSubscriber.setSkills(listSkill);
         }
         return this.subscriberRepository.save(currentSubscriber);
+    }
+
+    public ResEmailJobDTO convertJobToSendEmail(Job job) {
+        ResEmailJobDTO response = new ResEmailJobDTO();
+        response.setName(job.getName());
+        response.setSalary(job.getSalary());
+        response.setCompany(new ResEmailJobDTO.CompanyEmail(job.getCompany().getName()));
+        List<Skill> listkills = job.getSkills();
+        List<ResEmailJobDTO.SkillEmail> eachSkill = listkills.stream()
+                .map(skill -> new ResEmailJobDTO.SkillEmail(skill.getName()))
+                .collect(Collectors.toList());
+        response.setSkills(eachSkill);
+        return response;
+    }
+
+    public void sendSubscribersEmailJobs() {
+        List<Subscriber> listSubs = this.subscriberRepository.findAll();
+        if (listSubs != null && listSubs.size() > 0) {
+            for (Subscriber sub : listSubs) {
+                List<Skill> listSkills = sub.getSkills();
+                if (listSkills != null && listSkills.size() > 0) {
+                    List<Job> listJobs = this.jobRepository.findBySkillsIn(listSkills);
+                    if (listJobs != null && listJobs.size() > 0) {
+                        List<ResEmailJobDTO> listJobDTOs = listJobs.stream().map(
+                                job -> this.convertJobToSendEmail(job)).collect(Collectors.toList());
+                        this.emailService.sendEmailFromTemplateSync(
+                                sub.getEmail(),
+                                "Cơ hội việc làm hot đang chờ đón bạn, khám phá ngay",
+                                "job",
+                                sub.getName(),
+                                listJobDTOs);
+                    }
+                }
+            }
+        }
     }
 }

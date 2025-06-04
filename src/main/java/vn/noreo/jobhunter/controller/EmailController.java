@@ -3,7 +3,7 @@ package vn.noreo.jobhunter.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import vn.noreo.jobhunter.service.EmailService;
+import vn.noreo.jobhunter.service.SubscriberService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/api/v1")
 public class EmailController {
 
-    private final EmailService emailService;
+    private final SubscriberService subscriberService;
 
-    public EmailController(EmailService emailService) {
-        this.emailService = emailService;
+    public EmailController(SubscriberService subscriberService) {
+        this.subscriberService = subscriberService;
     }
 
     @GetMapping("/email")
@@ -25,7 +25,7 @@ public class EmailController {
         // this.emailService.sendEmailSync("buianhtuan2003kb@gmail.com", "TEST SEND
         // EMAIL", "<h1> <b> Hello </b> </h1>",
         // false, true);
-        this.emailService.sendEmailFromTemplateSync("buianhtuan2003kb@gmail.com", "TEST SEND EMAIL", "job");
+        this.subscriberService.sendSubscribersEmailJobs();
         return "ok";
     }
 
