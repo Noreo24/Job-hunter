@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.request.ReqLoginDTO;
@@ -28,6 +29,7 @@ import vn.noreo.jobhunter.util.error.IdInvalidException;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Tag(name = "Authentication", description = "Authentication APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class AuthController {

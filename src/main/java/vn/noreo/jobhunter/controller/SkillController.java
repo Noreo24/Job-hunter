@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Skill;
 import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
+@Tag(name = "Skill", description = "Skill management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class SkillController {

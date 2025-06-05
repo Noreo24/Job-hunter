@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Job;
 import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
@@ -26,6 +27,7 @@ import vn.noreo.jobhunter.util.error.IdInvalidException;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Tag(name = "Job", description = "Job management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class JobController {

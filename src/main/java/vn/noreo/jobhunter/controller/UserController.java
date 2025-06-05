@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.User;
 import vn.noreo.jobhunter.domain.response.ResCreateUserDTO;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+@Tag(name = "User", description = "User management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {

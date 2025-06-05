@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Permission;
 import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Tag(name = "Permission", description = "Permission management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class PermissionController {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Company;
 import vn.noreo.jobhunter.domain.response.ResultPaginationDTO;
@@ -22,6 +23,7 @@ import vn.noreo.jobhunter.service.CompanyService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 import vn.noreo.jobhunter.util.error.IdInvalidException;
 
+@Tag(name = "Company", description = "Company management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class CompanyController {

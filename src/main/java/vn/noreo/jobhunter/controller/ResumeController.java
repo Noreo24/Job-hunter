@@ -7,6 +7,7 @@ import com.turkraft.springfilter.boot.Filter;
 import com.turkraft.springfilter.builder.FilterBuilder;
 import com.turkraft.springfilter.converter.FilterSpecificationConverter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Company;
 import vn.noreo.jobhunter.domain.Job;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Tag(name = "Resume", description = "Resume management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class ResumeController {

@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import vn.noreo.jobhunter.domain.response.file.ResUploadFileDTO;
 import vn.noreo.jobhunter.service.FileService;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 import vn.noreo.jobhunter.util.error.UploadFileException;
 
+@Tag(name = "File", description = "File management APIs")
 @RestController
 @RequestMapping("/api/v1")
 public class FileController {
