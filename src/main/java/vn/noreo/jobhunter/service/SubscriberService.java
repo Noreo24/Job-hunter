@@ -40,6 +40,10 @@ public class SubscriberService {
     // System.out.println(">>>>>>>>>>>>>>>>>>>> TEST CRON");
     // }
 
+    public Subscriber getSubscriberByEmail(String email) {
+        return this.subscriberRepository.findByEmail(email);
+    }
+
     public Optional<Subscriber> handleFetchSubscriberById(long id) {
         return this.subscriberRepository.findById(id);
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import vn.noreo.jobhunter.domain.Subscriber;
 import vn.noreo.jobhunter.service.SubscriberService;
+import vn.noreo.jobhunter.util.SecurityUtil;
 import vn.noreo.jobhunter.util.annotation.ApiMessage;
 import vn.noreo.jobhunter.util.error.IdInvalidException;
 
@@ -37,5 +38,13 @@ public class SubscriberController {
     public ResponseEntity<Subscriber> updateSubscriber(@RequestBody Subscriber newSubscriber)
             throws IdInvalidException {
         return ResponseEntity.ok().body(this.subscriberService.handeUpdateSubscriber(newSubscriber));
+    }
+
+    @PostMapping("/subscribers/skills")
+    @ApiMessage("Fetch all subscriber's skills")
+    public ResponseEntity<Subscriber> fetchAllSubscribersSkills() throws IdInvalidException {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+        return ResponseEntity.ok().body(this.subscriberService.getSubscriberByEmail(email));
     }
 }
