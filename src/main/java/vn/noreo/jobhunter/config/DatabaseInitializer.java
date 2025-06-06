@@ -3,6 +3,8 @@ package vn.noreo.jobhunter.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
     public DatabaseInitializer(PermissionRepository permissionRepository,
             RoleRepository roleRepository,
@@ -35,7 +38,8 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println(">>>>>>>>>> START INIT DATABASE <<<<<<<<<<");
+        // System.out.println(">>>>>>>>>> START INIT DATABASE <<<<<<<<<<");
+        log.info(">>>>>>>>>> START INIT DATABASE <<<<<<<<<<");
         long countPermissions = permissionRepository.count();
         long countRoles = roleRepository.count();
         long countUsers = userRepository.count();
@@ -126,10 +130,9 @@ public class DatabaseInitializer implements CommandLineRunner {
         }
 
         if (countUsers == 0 && countRoles == 0 && countPermissions == 0) {
-            System.out.println(">>>>>>>>>> INIT DATABASE SUCCESS <<<<<<<<<<");
+            log.info(">>>>>>>>>> INIT DATABASE SUCCESS <<<<<<<<<<");
         } else {
-            System.out.println(">>>>>>>>>> INIT DATABASE SKIPPED <<<<<<<<<<");
-
+            log.info(">>>>>>>>>> INIT DATABASE SKIPPED <<<<<<<<<<");
         }
     }
 
